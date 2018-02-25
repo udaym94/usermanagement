@@ -175,19 +175,21 @@ app.get('/edituser/:userId', (req,res) => {
   //var user = new User(postdata);
   var userdata = {};
   var admindata = {};
+  console.log(req);
   var userId = req.params.userId;
-  Admin.find({}, (err,admin) => {
+  console.log('userID val',userId);
+  console.log('userId ',mongoose.Types.ObjectId.isValid(userId));
+  User.
+  findById(userId).
+  populate('createdby').
+  exec((err,user) => {
     if(err) throw err;
-    //console.log(`User Data ${user}`);
-    //console.log(JSON.stringify(admin,false,2));
-    admindata = admin;
-    User.findById(userId, (err,user) => {
-      if(err) throw err;
-      //console.log(`User Data ${user}`);
-      userdata = user;
-      res.render('edituser', {admindata,userdata});
-    });
-    //res.render('adduser', {admin});
+    userdata = user;
+      Admin.find({}, (err,admin) => {
+        if(err) throw err;
+        admindata = admin;
+        res.render('edituser', {admindata,userdata});
+      });
   });
 });
 

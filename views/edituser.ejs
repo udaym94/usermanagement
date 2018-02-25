@@ -41,7 +41,7 @@
         <form method="post" action="/updateuser/<%= userdata._id %>?_method=PUT" enctype="multipart/form-data">
           <div class="form-group">
             <% if(userdata.image != '') {%>
-              <img class="img-preview" src="<%= userdata.image %>">
+              <img class="img-preview" src="/<%= userdata.image %>">
             <% } %>
             <label for="image">Image</label>
             <input type="file" class="form-control" name="image" id="image">

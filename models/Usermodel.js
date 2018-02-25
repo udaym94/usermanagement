@@ -16,6 +16,7 @@ var userSchema = new Schema({
   password: String,
   createdby: {
     type: Schema.Types.ObjectId,
+    //type: mongoose.SchemaTypes.ObjectId,
     ref: 'Admin'
   }
 });
