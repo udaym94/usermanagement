@@ -1,0 +1,23 @@
+{
+  "name": "usermanagement",
+  "version": "1.0.0",
+  "description": "User Managemnt Sysytem Using Mongoose on Node.js",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^1.0.3",
+    "body-parser": "^1.18.2",
+    "connect-mongo": "^2.0.1",
+    "ejs": "^2.5.7",
+    "express": "^4.16.2",
+    "express-session": "^1.15.6",
+    "lodash": "^4.17.5",
+    "method-override": "^2.3.10",
+    "mongoose": "^5.0.4",
+    "multer": "^1.3.0"
+  }
+}
