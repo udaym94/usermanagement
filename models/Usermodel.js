@@ -14,6 +14,10 @@ var userSchema = new Schema({
     required: true
   },
   password: String,
+  createdby: {
+    type: Schema.Types.ObjectId,
+    ref: 'Admin'
+  }
 });
 
 //var User = ;

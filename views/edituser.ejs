@@ -12,6 +12,13 @@
     <title>User Management App - Edit User </title>
   </head>
   <body>
+    <style>
+      .img-preview{
+        height:80px;
+        width:80px;
+        border-radius: 5px;
+      }
+    </style>
     <div class="container-fluid">
       <div class="column" style="height:5%;display:flow-root;">
         <ul class="nav pull-left">
@@ -31,23 +38,38 @@
     </div>
     <div class="container" style="min-height:80vh;">
       <div class="row">
-        <form method="post" action="/updateuser/<%= user._id %>?_method=PUT">
+        <form method="post" action="/updateuser/<%= userdata._id %>?_method=PUT" enctype="multipart/form-data">
+          <div class="form-group">
+            <% if(userdata.image != '') {%>
+              <img class="img-preview" src="<%= userdata.image %>">
+            <% } %>
+            <label for="image">Image</label>
+            <input type="file" class="form-control" name="image" id="image">
+          </div>
           <div class="form-group">
             <label for="name">Name</label>
-            <input type="text" class="form-control" name="name" value="<%= user.name %>" id="name" aria-describedby="emailHelp" placeholder="Enter Name">
+            <input type="text" class="form-control" name="name" value="<%= userdata.name %>" id="name" aria-describedby="emailHelp" placeholder="Enter Name">
             <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
           </div>
           <div class="form-group">
             <label for="email">Email ID</label>
-            <input type="email" class="form-control" value="<%= user.email %>" name="email" id="email" placeholder="Email ID">
+            <input type="email" class="form-control" value="<%= userdata.email %>" name="email" id="email" placeholder="Email ID">
           </div>
           <div class="form-group">
             <label for="contact">Contact No.</label>
-            <input type="text" class="form-control" value="<%= user.contact %>" id="contact" name="contact" placeholder="Contact No.">
+            <input type="text" class="form-control" value="<%= userdata.contact %>" id="contact" name="contact" placeholder="Contact No.">
           </div>
           <div class="form-group">
             <label for="password">Password</label>
-            <input type="password" class="form-control" value="<%= user.password %>" placeholder="Password" id="password" name="password">
+            <input type="password" class="form-control" value="<%= userdata.password %>" placeholder="Password" id="password" name="password">
+          </div>
+          <div class="form-group">
+            <label for="password">Created By</label>
+            <select class="form-control" name="createdby">
+              <% admindata.forEach(function(admin){ %>
+                <option value="<%= admin._id %>" <% if(admin._id === userdata.createdby) {selected="selected"} %> ><%= admin.name %></option>
+              <% }); %>
+            </select>
           </div>
           <button type="submit" class="btn btn-success"><i class="fa fa-check"> Update User</i></button>
         </form>

@@ -56,10 +56,12 @@ app.use(session({
 //Default Route is User List
 //requiresLogin
 app.get('', (req,res) => {
-  User.find({}, function(err, users) {
+  User.
+  find({}).
+  populate('createdby').
+  exec(function (err, users) {
     if (err) throw err;
-    // object of all the users
-    //console.log(users);
+    console.log(JSON.stringify(users,false,2));
     res.render('home',{users});
   });
   //res.render('home');
@@ -132,7 +134,13 @@ function authenticate(req,res) {
 
 //Load Add User form
 app.get('/adduser', (req,res) => {
-  res.render('adduser');
+  //res.render('adduser');
+  Admin.find({}, (err,admin) => {
+    if(err) throw err;
+    //console.log(`User Data ${user}`);
+    console.log(JSON.stringify(admin,false,2));
+    res.render('adduser', {admin});
+  });
 });
 
 //Profile View
@@ -148,7 +156,7 @@ app.post('/saveuser',upload, (req,res) => {
   var filedestiny = req.file.destination.substr(7);
   console.log(filedestiny);
   var filepath = req.file.filename;
-  var postdata = _.pick(req.body,['name','email','contact','password']);
+  var postdata = _.pick(req.body,['name','email','contact','password','createdby']);
   //console.log(postdata);
   postdata.image = filepath;
   var user = new User(postdata);
@@ -165,12 +173,21 @@ app.post('/saveuser',upload, (req,res) => {
 //Edit User Form
 app.get('/edituser/:userId', (req,res) => {
   //var user = new User(postdata);
+  var userdata = {};
+  var admindata = {};
   var userId = req.params.userId;
-  //console.log(userId);
-  User.findById(userId, (err,user) => {
+  Admin.find({}, (err,admin) => {
     if(err) throw err;
     //console.log(`User Data ${user}`);
-    res.render('edituser', {user});
+    //console.log(JSON.stringify(admin,false,2));
+    admindata = admin;
+    User.findById(userId, (err,user) => {
+      if(err) throw err;
+      //console.log(`User Data ${user}`);
+      userdata = user;
+      res.render('edituser', {admindata,userdata});
+    });
+    //res.render('adduser', {admin});
   });
 });
 
