@@ -67,7 +67,7 @@
             <label for="password">Created By</label>
             <select class="form-control" name="createdby">
               <% admindata.forEach(function(admin){ %>
-                <option value="<%= admin._id %>" <% if(admin._id === userdata.createdby) {selected="selected"} %> ><%= admin.name %></option>
+                <option value="<%= admin._id %>" <% if(admin._id == userdata.createdby) { %><%= selected="selected" %><% } %> ><%= admin.name %></option>
               <% }); %>
             </select>
           </div>

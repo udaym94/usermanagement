@@ -41,6 +41,7 @@ app.set('view engine', 'ejs');
 app.use(session({
   secret: 'admin secret',
   resave: true,
+  //rolling: true,
   saveUninitialized: false,
   store: new MongoStore({
     mongooseConnection: mongoose.connection
@@ -55,7 +56,7 @@ app.use(session({
 
 //Default Route is User List
 //requiresLogin
-app.get('', (req,res) => {
+app.get('', requiresLogin, (req,res) => {
   User.
   find({}).
   populate('createdby').
@@ -99,19 +100,20 @@ app.post('/authenticateadmin', (req,resp) => {
       bcrypt.compare(postdata.password, admin.password, function(err, res) {
         if(err) throw err;
         //resp.send('Login Successful');
-        resp.redirect('/');
         req.session.userId = admin._id;
-        session.Session.prototype.login = function(admin){
-          this.userInfo = admin;
-        };
-        console.log('req.session.userId',req.session.userId);
-        console.log('session.Session.prototype.login', session.Session.prototype.login);
-        console.log('session.Session.prototype.login.userInfo',session.Session.prototype.login.userInfo);
+        req.session.save();
+        resp.redirect('/');
       });
   });
 });
 
 function requiresLogin(req, res, next) {
+  console.log(req);
+
+  req.session.reload(function(err) {
+  console.log('Req Session ',req.session);
+  })
+
   if (req.session && req.session.userId) {
     return next();
   } else {
@@ -121,19 +123,8 @@ function requiresLogin(req, res, next) {
   }
 }
 
-function authenticate(req,res) {
-  console.log('session.Session.prototype.login.userInfo 2',req.session.Session.prototype.login.userInfo);
-  if((req.session) && req.session.userId != '' ){
-    var userId = req.session.userId;
-    console.log(req.session.userId);
-    Admin.findById({userId}, (req,resp) => {
-      console.log(resp);
-    });
-  }
-}
-
 //Load Add User form
-app.get('/adduser', (req,res) => {
+app.get('/adduser', requiresLogin, (req,res) => {
   //res.render('adduser');
   Admin.find({}, (err,admin) => {
     if(err) throw err;
@@ -144,12 +135,12 @@ app.get('/adduser', (req,res) => {
 });
 
 //Profile View
-app.get('/profile', (req,res) => {
+app.get('/profile', requiresLogin, (req,res) => {
   res.render('profile');
 });
 
 //Save User
-app.post('/saveuser',upload, (req,res) => {
+app.post('/saveuser', requiresLogin, upload, (req,res) => {
   //console.log('Save User');
   //console.log(req);
   console.log(req.file.destination);
@@ -171,14 +162,11 @@ app.post('/saveuser',upload, (req,res) => {
 });
 
 //Edit User Form
-app.get('/edituser/:userId', (req,res) => {
+app.get('/edituser/:userId', requiresLogin, (req,res) => {
   //var user = new User(postdata);
   var userdata = {};
   var admindata = {};
-  console.log(req);
   var userId = req.params.userId;
-  console.log('userID val',userId);
-  console.log('userId ',mongoose.Types.ObjectId.isValid(userId));
   User.
   findById(userId).
   populate('createdby').
@@ -194,7 +182,7 @@ app.get('/edituser/:userId', (req,res) => {
 });
 
 //Update User info
-app.put('/updateuser/:userId', (req,res) => {
+app.put('/updateuser/:userId', requiresLogin, (req,res) => {
   //var user = new User(postdata);
   var userId = req.params.userId;
   var postdata = _.pick(req.body,['name','email','contact','password']);
@@ -206,7 +194,7 @@ app.put('/updateuser/:userId', (req,res) => {
   });
 });
 
-app.delete('/deleteuser/:userId', (req,res) => {
+app.delete('/deleteuser/:userId', requiresLogin, (req,res) => {
   //var user = new User(postdata);
   var userId = req.params.userId;
   var postdata = _.pick(req.body,['name','email','contact','password']);

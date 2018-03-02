@@ -1,41 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
-    rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-
-    <title>User Management App - User List</title>
-  </head>
-  <style>
-    .userImage{
-      height:80px;
-      width:80px;
-      border-radius: 5px;
-    }
-  </style>
-  <body>
-    <div class="container-fluid">
-      <div class="column" style="height:5%;display:flow-root;">
-        <ul class="nav pull-left">
-          <li class="nav-item">
-            <a href="#" class="nav-link">User Management App</a>
-          </li>
-        </ul>
-        <ul class="nav pull-right">
-          <li class="nav-item">
-            <a href="#" class="nav-link">Login</a>
-          </li>
-          <li class="nav-item">
-            <a href="#" class="nav-link">Register</a>
-          </li>
-        </ul>
-      </div>
-    </div>
+<%- include('../public/partials/header'); %>
     <div class="container" style="min-height:90vh;">
       <div class="row">
         <a href="/adduser" class="btn btn-primary"> <i class="fa fa-plus"></i> Add User</a>
@@ -66,8 +29,4 @@
 
       </div>
     </div>
-    <footer>
-      <center> &copy User Management App, <%= (new Date()).getFullYear() %></center>
-    </footer>
-  </body>
-</html>
+<%- include('../public/partials/footer'); %>

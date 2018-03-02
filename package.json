@@ -4,7 +4,8 @@
   "description": "User Managemnt Sysytem Using Mongoose on Node.js",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node app.js",
+    "start": "node app.js"
   },
   "author": "",
   "license": "ISC",
