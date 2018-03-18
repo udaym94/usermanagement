@@ -1,34 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
-    rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-
-    <title>User Management App - Create Admin </title>
-  </head>
-  <body>
-    <div class="container-fluid">
-      <div class="column" style="height:5%;display:flow-root;">
-        <ul class="nav pull-left">
-          <li class="nav-item">
-            <a href="#" class="nav-link">User Management App</a>
-          </li>
-        </ul>
-        <ul class="nav pull-right">
-          <li class="nav-item">
-            <a href="/login" class="nav-link">Login</a>
-          </li>
-          <li class="nav-item">
-            <a href="/register" class="nav-link">Register</a>
-          </li>
-        </ul>
-      </div>
-    </div>
+<%- include('../public/partials/header'); %>
     <div class="gap" style="height:10vh"></div>
     <div class="container" style="min-height:80vh;">
       <div class="col-md-4 offset-md-4">
@@ -46,6 +16,7 @@
             <div class="form-group">
               <label for="name">Email ID</label>
               <input type="text" class="form-control" name="email" id="email" placeholder="Enter Email">
+              <div class="message" style="color:red;"></div>
             </div>
             <div class="form-group">
               <label for="name">Contact No.</label>
@@ -59,14 +30,26 @@
               <label for="password">Confirm Password</label>
               <input type="password" class="form-control" placeholder="Confirm Password" id="passwordConf" name="passwordConf">
             </div>
-            <button type="submit" class="btn btn-info" style="width: 100%;">Register <i class="fa fa-arrow-circle-o-right"></i></button>
+            <button type="submit" class="btn btn-info" style="width: 100%;" id="register">Register <i class="fa fa-arrow-circle-o-right"></i></button>
           </form>
 
         </div>
       </div>
     </div>
-    <footer>
-      <center> &copy User Management App, <%= (new Date()).getFullYear() %></center>
-    </footer>
-  </body>
-</html>
+
+    <script>
+    $('#email').on('focusout',()=>{
+      var email = $('#email').val();
+      $.post('/checkAdminEmail', {email:email},(data) => {
+        if(data.count > 0){
+          $('.message').html('<i class="fa fa-times"></i>EmailID Already Registered');
+          $('#register').prop('disabled',true);
+        }
+        else{
+          $('#register').prop('disabled',false);
+        }
+      });
+    });
+    </script>
+
+<%- include('../public/partials/footer'); %>

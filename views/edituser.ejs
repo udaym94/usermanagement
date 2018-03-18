@@ -1,5 +1,14 @@
 <%- include('../public/partials/header'); %>
-    <div class="container" style="min-height:90vh;">
+
+<style>
+.img-preview{
+  height:100px;
+  border-radius: 5px;
+}
+</style>
+
+<div class="gap" style="height:10vh"></div>
+    <div class="container" style="min-height:80vh;">
       <div class="row">
         <form method="post" action="/updateuser/<%= userdata._id %>?_method=PUT" enctype="multipart/form-data">
           <div class="form-group">
@@ -29,7 +38,6 @@
           <div class="form-group">
             <label for="password">Created By</label>
             <select class="form-control" name="createdby">
-
               <% admindata.forEach(function(admin){ %>
                 <% var adminId = JSON.stringify(admin._id); %>
                 <% var userdataCBId = JSON.stringify(userdata.createdby._id); %>

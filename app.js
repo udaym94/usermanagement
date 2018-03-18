@@ -52,10 +52,16 @@ app.use(session({
   })
 }));
 
-// app.use( (req,res,next) => {
-//   res.locals.currentUser = req.session.userId;
-//   next();
-// });
+app.use(function(req, res, next){
+  res.locals.currentUser = req.session.userId;
+  if(req.session.userId){
+    Admin.findById(req.session.userId, (err,admin) => {
+      if(err) throw err;
+      res.locals.adminEmail = admin.email;
+    });
+  }
+  next();
+});
 
 //Default Route is User List
 //requiresLogin
@@ -79,18 +85,14 @@ app.get('/register', (req,res) => {
 
 //Login View
 app.get('/login', (req,res) => {
-  console.log('Sess ion',req.session);
   res.render('login');
 });
 
 //Create Admin Account
 app.post('/createadmin', (req,res) => {
   var postdata = _.pick(req.body,['name','email','username','contactno','password','passwordConf']);
-  //use schema.create to insert data into the db
-  console.log(Admin);
   Admin.create(postdata, function (err, user) {
     if(err) throw err;
-    console.log(user);
     res.redirect('/profile');
   });
 });
@@ -103,7 +105,6 @@ app.post('/authenticateadmin', (req,resp) => {
 
       bcrypt.compare(postdata.password, admin.password, function(err, res) {
         if(err) throw err;
-        //resp.send('Login Successful');
         req.session.userId = admin._id;
         req.session.save();
         resp.redirect('/');
@@ -112,8 +113,6 @@ app.post('/authenticateadmin', (req,resp) => {
 });
 
 function requiresLogin(req, res, next) {
-  console.log('requiresLogin Sess',req.session);
-
   if (req.session && req.session.userId) {
     return next();
   } else {
@@ -121,60 +120,9 @@ function requiresLogin(req, res, next) {
   }
 }
 
-app.use(function(req, res, next){
-  //res.locals.currentUser = req.userID;
-  console.log('cookie userId',req.session.userId);
-  res.locals.currentUser = req.session.userId;
-  console.log('currentUser',res.locals.currentUser);
-  //res.locals.authenticated = ! req.user.anonymous;
-  next();
-});
-
-
-// GET /logout
-// app.get('/logout', function(req, res, next) {
-//   if (req.session) {
-//     // delete session object
-//     req.session.destroy(function(err) {
-//       if(err) {
-//         console.log('err in Logout');
-//         console.log(typeof err);
-//         console.log(JSON.stringify(err,false,2));
-//         //return next(err);
-//       } else {
-//         console.log('not err in Logout');
-//         return res.redirect('/login');
-//       }
-//     });
-//   }
-// });
-
-// app.get('/logout', (req,res) => {
-//     //req.logout();
-//     console.log(req.session);
-//     console.log(req.sessionID);
-//
-//     var thisSess = req.sessionID;
-//
-//     req.session = null;
-//     req.sessionID = null;
-//     //session.shouldDestroy(req);
-//     // store.destroy(thisSess, (cb) => {
-//     //   cb(error);
-//     //   res.render('login',{succ_msg : 'Successfully Logged Out! See You again'});
-//     // });
-//
-//     console.log(req.session);
-//     console.log(req.sessionID);
-//     //res.redirect('/login');
-//     res.render('login',{succ_msg : 'Successfully Logged Out! See You again'});
-// });
-
 //Logout Admin
 app.get('/logout', (req,res) => {
-  console.log('Before' ,req.session);
   req.session.cookie.expires = new Date(Date.now() - 3600000);
-  console.log('After' ,req.session);
   //return res.redirect('login',{succ_msg : 'Successfully Logged Out! See You again'});
   return res.redirect(200,'login');
     // req.session.destroy( () => {
@@ -195,8 +143,6 @@ app.get('/adduser', requiresLogin, (req,res) => {
   //res.render('adduser');
   Admin.find({}, (err,admin) => {
     if(err) throw err;
-    //console.log(`User Data ${user}`);
-    console.log(JSON.stringify(admin,false,2));
     res.render('adduser', {admin});
   });
 });
@@ -208,18 +154,13 @@ app.get('/profile', requiresLogin, (req,res) => {
 
 //Save User
 app.post('/saveuser', requiresLogin, upload, (req,res) => {
-  console.log(req.file.destination);
   var filedestiny = req.file.destination.substr(7);
-  console.log(filedestiny);
   var filepath = req.file.filename;
   var postdata = _.pick(req.body,['name','email','contact','password','createdby']);
-  //console.log(postdata);
   postdata.image = filepath;
   var user = new User(postdata);
-  //res.send(postdata);
   user.save(postdata, (err,success) => {
     if(err) throw err;
-    //console.log(success);
 
     res.redirect('/');
 
@@ -228,7 +169,6 @@ app.post('/saveuser', requiresLogin, upload, (req,res) => {
 
 //Edit User Form
 app.get('/edituser/:userId', requiresLogin, (req,res) => {
-  //var user = new User(postdata);
   var userdata = {};
   var admindata = {};
   var userId = req.params.userId;
@@ -248,28 +188,40 @@ app.get('/edituser/:userId', requiresLogin, (req,res) => {
 
 //Update User info
 app.put('/updateuser/:userId', requiresLogin, (req,res) => {
-  //var user = new User(postdata);
   var userId = req.params.userId;
   var postdata = _.pick(req.body,['name','email','contact','password']);
-  //console.log(userId);
   User.findByIdAndUpdate(userId, { $set: postdata },{ new: true}, (err,user) => {
     if(err) throw err;
-    //console.log(`User Data ${user}`);
     res.redirect('/');
   });
 });
 
 app.delete('/deleteuser/:userId', requiresLogin, (req,res) => {
-  //var user = new User(postdata);
   var userId = req.params.userId;
   var postdata = _.pick(req.body,['name','email','contact','password']);
-  //console.log(userId);
   User.findByIdAndRemove(userId, {}, (err,user) => {
     if(err) throw err;
-    //console.log(`User Data ${user}`);
     res.redirect('/');
   });
 });
+
+//AJAX Calls
+//Check User Email
+app.post('/checkUserEmail', (req,res) => {
+  //var postdata = _.pick(req.body,['email']);
+  User.count({email:req.body.email}, (err,count) => {
+    if(err) throw err;
+    res.status(200).send({'count':count});
+  });
+});
+//Check Admin Email
+app.post('/checkAdminEmail', (req,res) => {
+  Admin.count({email:req.body.email}, (err,count) => {
+    if(err) throw err;
+    res.status(200).send({'count':count});
+  });
+});
+
 
 //Run App
 app.listen(port);
