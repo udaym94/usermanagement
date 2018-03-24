@@ -6,7 +6,8 @@ const methodOverride = require('method-override');
 const bcrypt = require('bcrypt');
 const multer = require('multer');
 const session = require('express-session');
-mongoose.connect('mongodb://localhost/usermangement');
+//mongoose.connect('mongodb://localhost/usermangement');
+mongoose.connect('mongodb://udaymishra:###wow123@ds123399.mlab.com:23399/usermanagement');
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
