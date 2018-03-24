@@ -9,6 +9,14 @@ const session = require('express-session');
 //mongoose.connect('mongodb://localhost/usermangement');
 mongoose.connect('mongodb://udaymishra:###wow123@ds123399.mlab.com:23399/usermanagement');
 
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'db connection error:'));
+db.once('open', function() {
+  // we're connected!
+  console.log('Connected to DB,Enjoy!');
+});
+
+
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads')
