@@ -7,10 +7,10 @@ const bcrypt = require('bcrypt');
 const multer = require('multer');
 const session = require('express-session');
 //mongoose.connect('mongodb://localhost/usermangement');
-mongoose.connect('mongodb://udaymishra:###wow123@ds123399.mlab.com:23399/usermanagement');
+mongoose.connect('mongodb://admin:adminuserdb@ds123399.mlab.com:23399/usermanagement');
 
 var db = mongoose.connection;
-db.on('error', console.log('db connection error:'));
+db.on('error', console.error.bind(console, 'connection error:'));
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
